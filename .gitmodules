@@ -1,0 +1,9 @@
+[submodule "agentcontrol-fabric"]
+	path = agentcontrol-fabric
+	url = https://github.com/yulimfish/agentcontrol-fabric.git
+[submodule "agentcontrol-mcp"]
+	path = agentcontrol-mcp
+	url = https://github.com/yulimfish/agentcontrol-mcp.git
+[submodule "agentcontrol-docs"]
+	path = agentcontrol-docs
+	url = https://github.com/yulimfish/agentcontrol-docs.git

@@ -1,0 +1,26 @@
+# AgentControl monorepo ignore
+
+# Local/editor files
+.DS_Store
+.idea/
+.vscode/
+*.log
+
+# Local OpenCode/session notes
+SESSION_HANDOFF.md
+
+# Historical/local-only experiments from the original workspace
+bin/
+moling/
+
+# Dependencies and build outputs
+node_modules/
+.gradle/
+build/
+**/.gradle/
+**/build/
+
+# Minecraft/Fabric runtime config
+run/
+config/
+logs/
