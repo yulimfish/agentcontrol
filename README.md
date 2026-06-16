@@ -59,11 +59,3 @@ npm install
 node --check src/server.js
 ```
 
-## 发布策略
-
-推荐的 GitHub 初始布局：
-
-- 创建总仓 `AgentControl`，包含三个子目录。
-- 如需模块级 issue、release 或权限管理，再创建 `AgentControl-Fabric`、`AgentControl-MCP`、`AgentControl-Docs` 三个副仓。
-
-每个子目录都已经包含自己的 `README.md`、`.gitignore` 和 `AGENTS.md`，可以直接作为独立仓库上传。
