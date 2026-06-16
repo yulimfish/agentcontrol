@@ -19,6 +19,7 @@ node_modules/
 build/
 **/.gradle/
 **/build/
+*.jar
 
 # Minecraft/Fabric runtime config
 run/
