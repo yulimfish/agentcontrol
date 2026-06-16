@@ -34,15 +34,17 @@ AI/MCP 客户端 -> agentcontrol-mcp -> AgentControl Fabric 本地端点 -> Mine
 
 ### Fabric 侧（agentcontrol-fabric）
 
-- 本地 `/state` 端点：读取玩家坐标、朝向、血量、饥饿值、物品栏、准星目标、附近方块、附近实体。
-- 本地 `/action` 端点：执行移动、视角调整、攻击、使用、破坏/放置方块、关闭界面、释放鼠标。
+- 本地 `/state` 端点：读取玩家坐标、朝向、血量、饥饿值、物品栏、装备、准星目标、附近方块、附近实体、环境信息（生物群系、光照、天气、时间）、氧气、经验、朝向方位、地面状态、世界缓存信息。
+- 本地 `/action` 端点：执行移动、视角调整、攻击、使用、破坏/放置方块、关闭界面、释放鼠标、快捷栏切换、丢弃物品、主副手交换。
+- 区域方块扫描：通过 `scanRadius` 参数（1-16）调整附近方块扫描范围。
+- 世界缓存：按维度隔离，自动保存已探索区域方块到 `.minecraft/agentcontrol-cache/`。
 - 通过 Minecraft 客户端 API 执行，不依赖 macOS 系统键盘鼠标控制。
 - 可选 Mod Menu 集成，配置项："Capture mouse on release action"。
 - 英文和简体中文本地化。
 
 ### MCP 侧（agentcontrol-mcp）
 
-- 工具：`get_client_state`、`mod_move_player`、`mod_look`、`mod_attack`、`mod_use_item`、`mod_break_crosshair_block`、`mod_place_crosshair_block`、`mod_close_screen`、`mod_release_mouse`。
+- 工具：`get_client_state`（支持 `scan_radius` 参数）、`mod_move_player`、`mod_look`、`mod_attack`、`mod_use_item`、`mod_break_crosshair_block`、`mod_place_crosshair_block`、`mod_close_screen`、`mod_release_mouse`、`mod_select_slot`、`mod_drop`、`mod_swap_hands`。
 - 旧的 macOS System Events 工具默认关闭，仅当设置 `MINECRAFT_MCP_ENABLE_SYSTEM_INPUT=1` 时注册。
 - 默认走 Fabric 模组通道，不依赖系统辅助功能。
 
