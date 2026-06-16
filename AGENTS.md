@@ -115,6 +115,70 @@ cd agentcontrol-fabric && gradle build
 
 MCP 入口名已从 `minecraft-player` 改为 `agentcontrol`，命令路径已更新为 `agentcontrol-mcp/src/server.js`。修改 OpenCode 配置后必须退出并重启才能生效。
 
+## 阶段总结
+
+### 已完成的测试轮次
+
+**第一组测试（基础状态与移动）**
+- 验证 `get_client_state` 正常工作，返回完整状态
+- 验证 `mod_move_player` 能执行移动，位置变化正确
+- 发现 `mod_close_screen` 对 ESC 菜单不生效的问题
+
+**第二组测试（界面管理）**
+- 验证 `mod_release_mouse` 能打开透明界面释放鼠标
+- 验证在透明界面下仍可执行移动命令
+- 确认 Minecraft 界面会拦截动作输入
+
+**第三组测试（全面功能验证）**
+- 测试移动：前进、左转、跳跃 — 全部正常
+- 测试视角：yaw/pitch 调整 — 正常
+- 测试快捷栏切换：`mod_select_slot` — 正常
+- 测试破坏方块：`mod_break_crosshair_block` — 需要准星对准方块
+- 测试攻击：`mod_attack` — 正常
+- 测试使用物品：`mod_use_item` — 正常
+- 测试主副手交换：`mod_swap_hands` — 正常
+- 测试丢弃物品：`mod_drop` — 正常，物品从栏位消失
+- 发现 `crosshairTarget` 为 null 时无法破坏方块 — 需要添加准星对准机制
+
+### 已修复的问题
+
+1. **MCP 自动关闭屏幕**：`server.js` 新增 `ensureScreenClosed()`，所有动作工具在执行前自动关闭界面，无需 AI 手动检查
+2. **ESC 菜单关闭**：`close_screen` 现在先调用 `screen.close()` 再 `setScreen(null)`，能正确关闭 ESC 菜单
+3. **GitHub Actions 构建**：修复 YAML 语法错误，使用纯 `echo` 方式生成 release notes，避免 `**` 字符在 YAML 中解析出错
+4. **Gradle 版本兼容性**：移除硬编码的 `gradle-version: 8.8`，让 `setup-gradle` 自动检测项目所需版本（Fabric Loom 1.17.11 需要 Gradle 9.5.0）
+
+### 新增功能（v0.1.1）
+
+**Fabric 模组**：
+- `look_at` action：传入 x, y, z 坐标，自动计算 yaw/pitch 对准目标
+- `look_facing` action：支持 north/south/east/west/up/down 六个方位
+
+**MCP 服务**：
+- `mod_look_at`：对准指定世界坐标（用于破坏方块前瞄准）
+- `mod_look_facing`：面朝指定方向（用于移动前转向）
+- 所有动作工具自动关闭屏幕（对 AI 透明）
+
+**文档站**：
+- API 参考文档更新：新增 `look_at` 和 `look_facing` 说明
+- 前置条件说明更新：从"手动检查"改为"自动处理"
+- 版本更新记录：新增 v0.1.1 条目
+
+### 已知问题与待办
+
+1. **准星对准机制**：需要确保在执行 `break_crosshair` 或 `place_crosshair` 前，准星确实对准了目标方块。推荐流程：
+   ```text
+   1. get_client_state → 获取 nearbyBlocks
+   2. 分析 nearbyBlocks，选择目标方块
+   3. mod_look_at(x, y, z) → 对准方块中心
+   4. mod_break_crosshair_block → 破坏方块
+   ```
+
+2. **GitHub Actions 缓存**：GitHub 缓存服务偶尔返回 400 错误，不影响构建，但会拖慢后续构建速度
+
+3. **Node.js 20 弃用**：`actions/checkout@v4` 等 Action 基于 Node.js 20，GitHub 将在 2026-09-16 后移除支持。需要关注 Action 更新版本。
+
+4. **移动精度**：当前移动通过 `KeyBinding.setPressed(true)` 实现，在后台线程延迟释放。移动距离取决于帧率，不够精确。如需精确移动，可能需要考虑其他方案（如使用 Minecraft 客户端的 `ClientPlayerEntity` 直接修改坐标，但这可能触发反作弊）。
+
 ## 发布说明
 
 根目录可以作为 `AgentControl` 总仓发布。每个子目录也有自己的 `README.md`、`.gitignore` 和 `AGENTS.md`，因此也可以单独作为副仓发布。
